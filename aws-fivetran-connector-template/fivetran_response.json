@@ -1,0 +1,6 @@
+{
+    "state": {"count": count + 1},
+    "insert":  { "table_name": ["data"]},
+    "schema":  {"primary_key": ["id", "date"]},
+    "hasMore": "False"
+}

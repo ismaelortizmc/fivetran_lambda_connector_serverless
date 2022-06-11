@@ -1,0 +1,20 @@
+{
+  "name": "aws-fivetran-connector-template",
+  "version": "1.0.0",
+  "description": "Template for Fivetran AWS connector using Serverless Framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Fivetran",
+    "AWS",
+    "Serverless",
+    "Connector"
+  ],
+  "author": "Lizandro",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless-python-requirements": "^5.4.0"
+  }
+}

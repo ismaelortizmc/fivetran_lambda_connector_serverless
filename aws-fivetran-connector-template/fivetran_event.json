@@ -1,0 +1,8 @@
+{
+    "secrets": {
+        "consumerKey": "",
+        "consumerSecret": "",
+        "apiKey": "yourApiKey"
+    },
+    "state": { "status": "yourStatus" }
+}
