@@ -21,8 +21,8 @@ def lambda_handler(request, context):
 
         # Process data - process data from API call and use state object to process data
         # Always confirm the state object is not empty
-        count = 0 if not 'count' in request["state"] else int(
-            request["state"]["count"])
+        count = 0 if not 'count' in state else int(
+            state["count"])
 
         # Extract API data
         raw_data = get_data_from_api(api_client)
