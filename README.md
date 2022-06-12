@@ -317,7 +317,11 @@ This is the function name in aws : `aws-fivetran-connector-template-dev-aws-five
 
 Note: `aws-fivetran-connector` is the name in `serverless.yml`
 
+### Deploy different stage (dev, prod):
 
+```bash
+  serverless  deploy --aws-profile serverless-admin --region us-west-2 --stage prod
+```
 
 ### Config AWS for Fivetran permisions and roles:
 
