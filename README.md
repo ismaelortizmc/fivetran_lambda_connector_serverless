@@ -1,443 +1,82 @@
-# Fivetran Lambda Function with Serverless Framework
+<!--
+title: 'AWS Python Example'
+description: 'This template demonstrates how to deploy a Python function running on AWS Lambda using the traditional Serverless Framework.'
+layout: Doc
+framework: v3
+platform: AWS
+language: python
+priority: 2
+authorLink: 'https://github.com/serverless'
+authorName: 'Serverless, inc.'
+authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
+-->
 
-## Settings AWS IAM for Fivetran:
 
-To connect [AWS Lambda](https://aws.amazon.com/lambda/) functions to Fivetran, you need:
+# Serverless Framework AWS Python Example
 
-- An AWS Lambda function
-- An AWS account with Administrator privileges
-- Make a note of the **External ID**. You will need it to configure AWS to connect with Fivetran. The automatically-generated External ID is tied to your fivetran account. If you close and re-open the setup form, the ID will remain the same.
+This template demonstrates how to deploy a Python function running on AWS Lambda using the traditional Serverless Framework. The deployed function does not include any event definitions as well as any kind of persistence (database). For more advanced configurations check out the [examples repo](https://github.com/serverless/examples/) which includes integrations with SQS, DynamoDB or examples of functions that are triggered in `cron`-like manner. For details about configuration of specific `events`, please refer to our [documentation](https://www.serverless.com/framework/docs/providers/aws/events/).
 
-​	**Fivetran** **External ID is** : Example `viscous_diersionss`
+## Usage
 
-1. Create **policy** in JSON tab:
+### Deployment
 
-   ```json
-      {
-          "Version": "2012-10-17",
-          "Statement": [
-              {
-                  "Sid": "InvokePermission",
-                  "Effect": "Allow",
-                  "Action": [
-                      "lambda:InvokeFunction"
-                  ],
-                  "Resource": "*"
-              }
-          ]
-      }
-   ```
+In order to deploy the example, you need to run the following command:
 
-   Policy Name: `Fivetran-Lambda-Invoke`
+```
+$ serverless deploy
+```
 
-2. Create a **unique role** for all Fivetran's invoke functions.
-
-   * Select type of trusted entity - Another AWS account - We need the `Account ID` 
-
-   * In **Options**, check the **Require external ID** checkbox.
-
-   * Click **Next: Permissions**.
-
-   * Select the `Fivetran-Lambda-Invoke` policy. 
-
-   * Click **Next: Tags**. Entering tags is optional, but you must click through the step.
-
-   * Click **Next: Review**.
-
-   * Name your new role `Fivetran-Lambda` and then click **Create role**.
-
-   * Select the Fivetran role that you just created. In the **Summary** section, make a note of the **Role ARN** value. 
-
-   * This **Role ARN** we used for all Lambda Functions related with Fivetran. 
-
-   * Select the designated Fivetran role.
-
-   * In the **Summary** section, click the **Trust Relationships** tab, and then click **Edit trust relationships**.
-
-     ```json
-     {
-       "Version": "2012-10-17",
-       "Statement": [
-         {
-           "Effect": "Allow",
-           "Principal": {
-             "AWS": "arn:aws:iam::834469178297:root"
-           },
-           "Action": "sts:AssumeRole",
-           "Condition": {
-             "StringEquals": {
-               "sts:ExternalId": "your_fivetran_externalID"
-             }
-           }
-         },
-         {
-           "Effect": "Allow",
-           "Principal": {
-             "Service": "lambda.amazonaws.com"
-           },
-           "Action": "sts:AssumeRole"
-         }
-       ]
-     }
-     
-     ```
-
-     Note: Replace the `"your_fivetran_externalID"` with the Fivetran External ID
-
-     * Click **Update Trust Policy**.
-
-       
-
-   ## Setting up AWS user for Serverless Framework:
-
-   Setting up AWS user `serverles-admin` 
-
-   - Acces key - Programmatic access
-   - Note: We can to  `Attach existing policies directly` - `AdministratorAccess` this is no recommend, the DevOps need to check what is the best policy for this user. 
-   - Save the credentials
-
-   
-
-   ## Setting local Serverless Framework:
-
-   - [Serverless Framework](https://www.serverless.com/) aims to ease the pain of creating, deploying, managing, and debugging lambda functions
-
-   - It integrates well with CI/CD tools - [Github Actions](https://github.com/serverless/github-action)
-
-   - It has **[CloudFormation](https://aws.amazon.com/es/cloudformation/)** support so your entire stack can be deployed using this framework
-
-   - For this framework you need to have [NodeJS](https://nodejs.org/en/)
-
-     	-  Node v16.13.0
-     	-  NPM v8.7.0
-
-   - We need to install [AWS CLI](https://aws.amazon.com/cli/)
-
-     `aws-cli/1.22.55 Python/3.8.10 Linux/5.13.0-44-generic botocore/1.24.0`
-
-   - Install the Serverless Framework.
-
-     ```bash
-     sudo npm install -g serverless
-
-   - Download credentials user on your machine. 
-
-   - Set the Serverless credentials.
-
-     ```bash
-     serverless config credentials --provider aws --key xx --secret xx --profile serverless-admin
-     ```
-
-##  Create a lambda function with Serverless Framework
-
-Note: 	`serverless` and `sls`  are the same commands.
+After running deploy, you should see output similar to:
 
 ```bash
-➜  fivetran_lambda_connector_serverless git:(main) sls  
-? What do you want to make? (Use arrow keys)
-❯ AWS - Node.js - Starter 
-  AWS - Node.js - HTTP API 
-  AWS - Node.js - Scheduled Task 
-  AWS - Node.js - SQS Worker 
-  AWS - Node.js - Express API 
-  AWS - Node.js - Express API with DynamoDB 
-  AWS - Python - Starter 
-  AWS - Python - HTTP API 
-  AWS - Python - Scheduled Task 
-  AWS - Python - SQS Worker 
-  AWS - Python - Flask API 
-  AWS - Python - Flask API with DynamoDB 
-  Other 
+Deploying aws-python-project to stage dev (us-east-1)
+
+✔ Service deployed to stack aws-python-project-dev (112s)
+
+functions:
+  hello: aws-python-project-dev-hello (1.5 kB)
 ```
 
-Select AWS - Python - Starter and set the proyect name :
+### Invocation
+
+After successful deployment, you can invoke the deployed function by using the following command:
 
 ```bash
-➜  fivetran_lambda_connector_serverless git:(main) ✗ sls                           
-
-Creating a new serverless project
-
-? What do you want to make? AWS - Python - Starter
-? What do you want to call this project? aws-fivetran-connector-template
-
-✔ Project successfully created in aws-fivetran-connector-template folder
-
-? Do you want to login/register to Serverless Dashboard? No
-
+serverless invoke --function hello
 ```
 
-Note: you can create a project for each Fivetran connector
-
-```bash
-fivetran_lambda_connector_serverless
-├── aws-fivetran-connector-template
-│   ├── handler.py
-│   ├── README.md
-│   └── serverless.yml
-└── README.md
-```
-
-Move to  `aws-fivetran-connector-template`, set a `venv` and activate it.
-
-Update you `.gitignore` file:
-
-```
-# Distribution / packaging
-.Python
-venv/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Serverless directories
-.serverless
-
-# NPM directories
-package-lock.json
-node_modules/
-```
-
-
-
-Run `npm init` for create `package.json` file for install new plugins in Serverless.
+Which should result in response similar to the following:
 
 ```json
 {
-  "name": "aws-fivetran-connector-template",
-  "version": "1.0.0",
-  "description": "Template for Fivetran AWS connector using Serverless Framework",
-  "main": "handler.py",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "Fivetran",
-    "AWS",
-    "Serverless",
-    "Connector"
-  ],
-  "author": "MCTEKK",
-  "license": "ISC"
+    "statusCode": 200,
+    "body": "{\"message\": \"Go Serverless v3.0! Your function executed successfully!\", \"input\": {}}"
 }
-
 ```
 
- Install `serverless-python-requirements` plugin for deploy Python lambda functions with `requirements.txt`
+### Local development
+
+You can invoke your function locally by using the following command:
+
+```bash
+serverless invoke local --function hello
+```
+
+Which should result in response similar to the following:
+
+```
+{
+    "statusCode": 200,
+    "body": "{\"message\": \"Go Serverless v3.0! Your function executed successfully!\", \"input\": {}}"
+}
+```
+
+### Bundling dependencies
+
+In case you would like to include third-party dependencies, you will need to use a plugin called `serverless-python-requirements`. You can set it up by running the following command:
 
 ```bash
 serverless plugin install -n serverless-python-requirements
 ```
 
-Automatic update `package.json`:
-
-```json
-{
-  "name": "aws-fivetran-connector-template",
-  "version": "1.0.0",
-  "description": "Template for Fivetran AWS connector using Serverless Framework",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "Fivetran",
-    "AWS",
-    "Serverless",
-    "Connector"
-  ],
-  "author": "MCTEKK",
-  "license": "ISC",
-  "devDependencies": {
-    "serverless-python-requirements": "^5.4.0"
-  }
-}
-```
-
-Configuration  in `serverless.yml` : 
-
-```yaml
-service: aws-fivetran-connector-template
-
-frameworkVersion: '3'
-
-provider:
-  name: aws
-  runtime: python3.8
-
-functions:
-  aws-fivetran-connector:
-    handler: handler.lambda_handler
-
-plugins:
-  - serverless-python-requirements
-
-```
-
-The `functions` you can set the name of AWS lambda  `aws-fivetran-connector` and the handler with `handler.lambda_handler`  ( `handler.py`  and function `lambda_handler`)
-
-### Deploy project with Serverless
-
-```bash
-serverless deploy --aws-profile serverless-admin --region us-west-2
-```
-
-```bash 
-Deploying aws-fivetran-connector-template to stage dev (us-west-2)
-
-✔ Service deployed to stack aws-fivetran-connector-template-dev (155s)
-
-functions:
-  aws-fivetran-connector: aws-fivetran-connector-template-dev-aws-fivetran-connector (11 MB)
-
-Toggle on monitoring with the Serverless Dashboard: run "serverless"
-```
-
-This is the function name in aws : `aws-fivetran-connector-template-dev-aws-fivetran-connector`
-
-**Note**: In the `.serverless/` directory you can see the `aws-fivetran-connector-template.zip` deployment file.
-
-
-
-### Deploy only the function:
-
-```bash
- serverless deploy  function -f aws-fivetran-connector --aws-profile serverless-admin --region us-west-2
-```
-
-Note: `aws-fivetran-connector` is the name in `serverless.yml`
-
-
-
-### Config AWS for Fivetran permisions and roles:
-
-![image-20220612164810649](./image-20220612164810649.png)
-
-viscous_dispersion
-
-arn:aws:iam::905883663515:role/Fivetran-connectors
-
-![image-20220612164917874](./image-20220612164917874.png)
-
-## Fivetran handler.py
-
-### Fivetran Event:
-
-```json
-{
-    "secrets": {
-        "consumerKey": "",
-        "consumerSecret": "",
-        "apiKey": "yourApiKey"
-    },
-    "state": { }
-}
-```
-
-The first event `state` is empty.  The `secrets` only accept the specify fields names `consumeKey, consumerSecret and apiKey`.
-
-### Fivetran Response:
-
-```json
-{
-    "state": {"count": "0" },  
-    "insert":  {"table_name": [ {"items": "objects"} ] },
-    "schema":  {"primary_key": ["asin", "date"] } ,
-    "hasMore": "False"
-}
-```
-
-You can add `update and delete` with the same format that `insert`
-
-### Fivetran Error Response:
-
-```json
-{
-    "state": {"count": "1" }, 
-    "errorMessage": "Custom error handling",
-    "hasMore": "False"
-}
-```
-
-### Fivetran connector `handler.py` template
-
-```python
-
-from datetime import datetime
-
-def lambda_handler(request, context):
-
-    # Read event data - get secret and state object from event
-    secrets = request['secrets']
-	state = request['state']
-    data = []
-    table_name = "table_name"
-    
-    
-    # API call - get data from API try catch block
-    try:
-        # Authenticate API call - use secret to authenticate API call
-        consumer_key = secrets["consumerKey"]
-        consumer_secret = secrets["consumerSecret"]
-        api_key = secrets["apiKey"]
-        
-        api_client = get_client(consumer_key, consumer_secret, api_key)
-        
-    	# Process data - process data from API call and use state object to process data
-        # Always confirm the state object is not empty
-		count = 0 if not 'count' in request["state"] else int(request["state"]["count"])
-        
-        # Extract API data
-        raw_data = get_data_from_api(api_client, count)
-        
-        # Transform API data
-        data = transform_data(raw_data)
-        
-    except Exception as e:
-    	# Error handling - if error, return error message for Fivetran
-        return {'state': {'count': count }, 'errorMessage': f"Error {str(e)}"}
-
-    # Load API data - return data to Fivetran
-    return {
-        "state": {"count": count + 1 },  
-        "insert":  { f"{table_name}": data },
-        'schema':  {'primary_key': ['id', 'date'] } ,
-        'hasMore': False
-	 }
-  
-
-def get_client(consumer_key, consumer_secret, api_key):
-    """
-    Get client API
-    """
-    pass
-
-def get_data_from_api(api_client, count):
-    """
-    Get data API
-    """
-    pass
-
-def transform_data(raw_data):
-    """
-    Transform data API
-    """
-    pass
-```
-
-
-
-
-
-
-​      
+Running the above will automatically add `serverless-python-requirements` to `plugins` section in your `serverless.yml` file and add it as a `devDependency` to `package.json` file. The `package.json` file will be automatically created if it doesn't exist beforehand. Now you will be able to add your dependencies to `requirements.txt` file (`Pipfile` and `pyproject.toml` is also supported but requires additional configuration) and they will be automatically injected to Lambda package during build process. For more details about the plugin's configuration, please refer to [official documentation](https://github.com/UnitedIncome/serverless-python-requirements).
