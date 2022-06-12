@@ -24,6 +24,6 @@ jobs:
       - name: serverless
         run: npm install serverless
       - name: deploy
-        uses: serverless/github-action@v3.1
+        uses: Teakowa/serverless-action@master
         with:
           args: --stage prod deploy
