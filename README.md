@@ -352,7 +352,7 @@ The first event `state` is empty.  The `secrets` only accept the specify fields 
 {
     "state": {"count": "0" },  
     "insert":  {"table_name": [ {"items": "objects"} ] },
-    'schema':  {'primary_key': ['asin', 'date'] } ,
+    "schema":  {"primary_key": ["asin", "date"] } ,
     'hasMore': "False"
 }
 ```
