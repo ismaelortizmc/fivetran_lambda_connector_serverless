@@ -321,13 +321,13 @@ Note: `aws-fivetran-connector` is the name in `serverless.yml`
 
 ### Config AWS for Fivetran permisions and roles:
 
-![image-20220612164810649](/home/digdata/Documents/code-projects/lambda_test/fivetran_lambda_connector_serverless/image-20220612164810649.png)
+![image-20220612164810649](./image-20220612164810649.png)
 
 viscous_dispersion
 
 arn:aws:iam::905883663515:role/Fivetran-connectors
 
-![image-20220612164917874](/home/digdata/Documents/code-projects/lambda_test/fivetran_lambda_connector_serverless/image-20220612164917874.png)
+![image-20220612164917874](./image-20220612164917874.png)
 
 ## Fivetran handler.py
 
@@ -353,7 +353,7 @@ The first event `state` is empty.  The `secrets` only accept the specify fields 
     "state": {"count": "0" },  
     "insert":  {"table_name": [ {"items": "objects"} ] },
     "schema":  {"primary_key": ["asin", "date"] } ,
-    'hasMore': "False"
+    "hasMore": "False"
 }
 ```
 
@@ -365,7 +365,7 @@ You can add `update and delete` with the same format that `insert`
 {
     "state": {"count": "1" }, 
     "errorMessage": "Custom error handling",
-    'hasMore': "False"
+    "hasMore": "False"
 }
 ```
 
