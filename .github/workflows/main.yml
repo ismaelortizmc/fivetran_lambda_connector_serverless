@@ -16,14 +16,30 @@ jobs:
   deploy_serverless:
     name: deploy
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.13.0]
     steps:
       - name: clone local repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+           node-version: ${{ matrix.node-version }}
       - name: npm install
         run: npm install
       - name: serverless
         run: npm install serverless
-      - name: deploy
-        uses: Teakowa/serverless-action@master
+      - name: serverless config
+        uses: serverless/github-action@v3.1
         with:
-          args: --stage prod deploy
+          args: config credentials --provider aws --key ${{ env.AWS_ACCESS_KEY_ID }} --secret ${{ env.AWS_SECRET_ACCESS_KEY }}  --profile serverless-admin
+      - name: serverless config
+        uses: serverless/github-action@v3.1
+        with:
+          args: deploy --aws-profile serverless-admin --region us-west-2 --stage prod
+
+
+
+ 
+
