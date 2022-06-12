@@ -1,41 +1,25 @@
-# This is a basic workflow to help you get started with Actions
-name: serverles-ci
+name: deploy lambda functions
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - master
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_DEFAULT_REGION: us-east-1
 
 jobs:
-  deploy:
+  deploy_serverless:
     name: deploy
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - name: serverless deploy
-      uses: serverless/github-action@v3.1
-      with:
-        args: deploy
-      env:
-        # or if using AWS credentials directly
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    - name: Install Plugin and Deploy
-      uses: serverless/github-action@v3.1
-      with:
-        args: -c "serverless plugin install --name serverless-python-requirements && serverless deploy"
-        entrypoint: /bin/sh
+      - name: clone local repository
+        uses: actions/checkout@v2
+      - name: npm install
+        run: npm install
+      - name: deploy
+        uses: Teakowa/serverless-action@master
+        with:
+          args: --stage prod deploy
