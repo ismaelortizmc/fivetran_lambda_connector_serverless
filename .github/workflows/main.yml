@@ -48,7 +48,7 @@ jobs:
         uses: serverless/github-action@v3.1
         with:
           args: plugin install -n serverless-python-requirements
-          entrypoint: /bin/sh
+          entrypoint: .
       - name: serverless deploy
         uses: serverless/github-action@v3.1
         with:
