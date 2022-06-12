@@ -28,13 +28,17 @@ jobs:
            node-version: ${{ matrix.node-version }}
       - name: npm install
         run: npm install
-      - name: serverless
-        run: npm install serverless
+      - name: install serverless
+        run: npm install -g serverless
       - name: serverless config
         uses: serverless/github-action@v3.1
         with:
           args: config credentials --provider aws --key ${{ env.AWS_ACCESS_KEY_ID }} --secret ${{ env.AWS_SECRET_ACCESS_KEY }}  --profile serverless-admin
-      - name: serverless config
+      - name: Serverless install Plugin 
+        uses: serverless/github-action@v3.1
+        with:
+          args: plugin install -n serverless-python-requirements       
+      - name: serverless deploy
         uses: serverless/github-action@v3.1
         with:
           args: deploy --aws-profile serverless-admin --region us-west-2 --stage prod
