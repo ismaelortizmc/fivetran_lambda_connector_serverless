@@ -309,6 +309,26 @@ This is the function name in aws : `aws-fivetran-connector-template-dev-aws-five
 
 
 
+### Deploy only the function:
+
+```bash
+ serverless deploy  function -f aws-fivetran-connector --aws-profile serverless-admin --region us-west-2
+```
+
+Note: `aws-fivetran-connector` is the name in `serverless.yml`
+
+
+
+### Config AWS for Fivetran permisions and roles:
+
+![image-20220612164810649](/home/digdata/Documents/code-projects/lambda_test/fivetran_lambda_connector_serverless/image-20220612164810649.png)
+
+viscous_dispersion
+
+arn:aws:iam::905883663515:role/Fivetran-connectors
+
+![image-20220612164917874](/home/digdata/Documents/code-projects/lambda_test/fivetran_lambda_connector_serverless/image-20220612164917874.png)
+
 ## Fivetran handler.py
 
 ### Fivetran Event:
@@ -344,7 +364,8 @@ You can add `update and delete` with the same format that `insert`
 ```json
 {
     "state": {"count": "1" }, 
-    "errorMessage": "Custom error handling"
+    "errorMessage": "Custom error handling",
+    'hasMore': "False"
 }
 ```
 
@@ -376,9 +397,8 @@ def lambda_handler(request, context):
         # Always confirm the state object is not empty
 		count = 0 if not 'count' in request["state"] else int(request["state"]["count"])
         
-        
         # Extract API data
-        raw_data = get_data_from_api(api_client)
+        raw_data = get_data_from_api(api_client, count)
         
         # Transform API data
         data = transform_data(raw_data)
@@ -402,7 +422,7 @@ def get_client(consumer_key, consumer_secret, api_key):
     """
     pass
 
-def get_data_from_api(api_client):
+def get_data_from_api(api_client, count):
     """
     Get data API
     """
