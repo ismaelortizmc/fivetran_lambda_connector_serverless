@@ -54,7 +54,7 @@ def lambda_handler(request, context):
     return {
         "state": state_updated,
         "insert":  {f"{table_name}": data},
-        'schema':  {'primary_key': ['id', 'date']},
+        'schema':  {f"{table_name}": {'primary_key': ['id', 'date']}},
         'hasMore': False
     }
 
@@ -94,8 +94,8 @@ def get_data_from_api(api_client: str, state: dict) -> dict:
     POKEDEX_LAST_REGION = 29
 
     # Porcess Fivetran state
-    count = 0 if not 'count' in state else int(state["count"])
-    count = 0 if count > POKEDEX_LAST_REGION else count
+    count = 1 if not 'count' in state else int(state["count"])
+    count = 1 if count > POKEDEX_LAST_REGION else count
 
     # Get data from API
     res = requests.get(f"{api_client}{count}")

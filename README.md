@@ -356,7 +356,7 @@ The first event `state` is empty.  The `secrets` only accept the specify fields 
 {
     "state": {"count": "0" },  
     "insert":  {"table_name": [ {"items": "objects"} ] },
-    "schema":  {"primary_key": ["asin", "date"] } ,
+    "schema":  {"table_name":{"primary_key": ["asin", "date"] }} ,
     "hasMore": "False"
 }
 ```
@@ -415,7 +415,7 @@ def lambda_handler(request, context):
     return {
         "state": {"count": count + 1 },  
         "insert":  { f"{table_name}": data },
-        'schema':  {'primary_key': ['id', 'date'] } ,
+        'schema':  { f"{table_name}": {'primary_key': ['id', 'date'] } ,
         'hasMore': False
 	 }
   

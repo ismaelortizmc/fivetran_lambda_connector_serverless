@@ -1,6 +1,6 @@
 {
     "state": {"count": "value update"},
     "insert":  { "table_name": ["data"]},
-    "schema":  {"primary_key": ["id", "date"]},
+    "schema":  {"table_name":{"primary_key": ["id", "date"]}},
     "hasMore": "False"
 }
