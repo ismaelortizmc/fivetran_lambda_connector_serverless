@@ -1,57 +1,33 @@
-name: deploy lambda functions
+name: Deploy serverless app
 
-on:
+on: 
   push:
     branches:
       - master
+      - develop
       
   workflow_dispatch:
-
-env:
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_DEFAULT_REGION: us-east-1
-
 jobs:
-  deploy_serverless:
+  deploy:
     name: deploy
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.13.0]
-        
-
+        node-version: [14.x]
     steps:
-      - name: clone local repository
-        uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-           node-version: ${{ matrix.node-version }}
-      - name: clean cache npm
-        run: npm cache clean --force
-      - name: npm install
-        run: npm install
-      - name: install python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.6
-      - name: Install dependencies
-        run: python -m pip install --upgrade pip
-      - name: install serverless
-        run: npm install -g serverless
-      - name: Serverless install Plugin 
-        uses: serverless/github-action@v3.1
-        with:
-          args: plugin install -n serverless-python-requirements
-      - name: serverless config
-        uses: serverless/github-action@v3.1
-        with:
-          args: config credentials --provider aws --key ${{ env.AWS_ACCESS_KEY_ID }} --secret ${{ env.AWS_SECRET_ACCESS_KEY }}  --profile serverless-admin
-      - name: serverless deploy
-        uses: serverless/github-action@v3.1
-        with:
-          args: deploy --aws-profile serverless-admin --region us-west-2 --stage prod
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: serverless deploy
+      uses: serverless/github-action@master
+      with:
+        args: deploy
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
 
 
 
