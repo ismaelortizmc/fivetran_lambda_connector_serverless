@@ -15,5 +15,5 @@ plugins:
 
 custom:
   pythonRequirements:
-    dockerizePip: true
-    dockerSsh: true
+    pythonBin: python3.8
+    dockerizePip: False
