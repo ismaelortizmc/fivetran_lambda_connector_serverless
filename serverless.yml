@@ -4,7 +4,7 @@ frameworkVersion: '3'
 
 provider:
   name: aws
-  runtime: python3.8
+  runtime: python3.10
 
 functions:
   aws-fivetran-connector:
@@ -15,5 +15,5 @@ plugins:
 
 custom:
   pythonRequirements:
-    pythonBin: python3.8
+    pythonBin: python
     dockerizePip: False
