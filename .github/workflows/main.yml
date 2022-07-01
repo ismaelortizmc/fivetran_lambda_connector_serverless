@@ -23,7 +23,7 @@ jobs:
     - name: Install Plugin
       uses: serverless/github-action@master
       with:
-        args: -c "serverless plugin install --name serverless-python-requirements"
+        args: -c "sls plugin install -n serverless-python-requirements"
         entrypoint: /bin/sh
     - name: serverless deploy
       uses: serverless/github-action@master
